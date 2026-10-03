@@ -27,6 +27,25 @@ features forem grandes, houver equipe/gates formais ou rastreabilidade rígida.
 Escolha MSP se operar vários clientes na mesma estação e precisar de isolamento
 de contexto e políticas para cada cliente.
 
+### Limite de isolamento
+
+Use `opencode` a partir da raiz Git de **um único projeto**. Não abra o TUI na
+pasta-pai que contém vários repositórios de clientes. Agentes agora confirmam
+raiz Git e instruem a não inspecionar repositórios irmãos. Isso não é isolamento
+de filesystem: `external_directory` trata caminhos fora do diretório da sessão,
+mas projetos irmãos dentro dele continuam acessíveis. Regras Bash negam alguns
+padrões comuns de shell composto, mas matching de comandos não equivale a
+sandbox de sistema operacional. Para clientes com dados sensíveis, mantenha
+workspaces separados, inicie OpenCode dentro de cada repo e use permissões de
+filesystem/OS apropriadas. `setup-opencode-msp` oferece contexto e gates
+multi-cliente mais explícitos.
+
+O gate de spec/plano é convenção de workflow instruída aos agentes, não
+validador criptográfico nem hook determinístico. Confirme `Status: Approved`
+você mesmo antes de `/plano` e `/fatia`; não aprove texto gerado automaticamente
+sem revisão. Para bloqueio de máquina que não dependa de seguir instruções,
+escolha `setup-opencode-harness` e configure/valide os gates adequados.
+
 Outras variantes no repositório: `setup-opencode-loop` foca em loops de
 implementação/verificação; `setup-opencode-os` em memória operacional e
 aprendizado; `setup-opencode` cobre operação DevOps/SRE. `setup-claude-code`,
@@ -97,6 +116,11 @@ Comece dentro do TUI:
 /entrega
 ```
 
+Após revisar `docs/spec.md`, registre `Status: Approved` explicitamente no
+arquivo. Após revisar `docs/plan.md`, registre `Status: Approved` e aprove cada
+fatia que pode ser executada. Se ainda estiver negociando requisitos, deixe
+`Draft`; os agentes devem parar e perguntar.
+
 Repita `/fatia N` → `/revisar N` → `/status` por fatia. `/entrega` prepara
 README e runbook; publicação/deploy ficam com você. Para iniciar mais tarde,
 rode `opencode` novamente na pasta do projeto: contexto operacional vem dos
@@ -148,6 +172,8 @@ contém credenciais e pode ser removido após instalação.
 - Ações proibidas são `deny`, não `ask`, portanto `--auto` não as aprova.
 - Construtor só pode fazer commit local; push é negado.
 - Revisor roda como subtask em modo subagent e não pode editar.
+- Planejador exige `Status: Approved` humano na spec antes de criar plano; construtor exige aprovação explícita de spec, plano e fatia.
+- Agentes devem ficar na raiz Git ativa e não inspecionar repositórios irmãos; chamadas Bash compostas são negadas.
 - `.env` e `.env.*` são negados em leitura, exceto `.env.example`.
 - Acesso a diretórios externos ao projeto é negado.
 

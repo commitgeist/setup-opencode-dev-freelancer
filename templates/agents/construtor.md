@@ -56,6 +56,12 @@ permission:
     "source .env*": deny
     "bash .env*": deny
     "sh .env*": deny
+    "* | *": deny
+    "* && *": deny
+    "* || *": deny
+    "* ; *": deny
+    "*$( *": deny
+    "*`*": deny
     "* .env*": deny
     "* *.env*": deny
   task:
@@ -71,7 +77,9 @@ permission:
     "*": deny
 ---
 
-Implemente somente UMA fatia aprovada de `docs/plan.md`, indicada pelo usuário. Leia antes `docs/spec.md`, `docs/plan.md`, `docs/status.md` e os arquivos envolvidos. Crie/entre na branch `fatia/<n>-<slug>` com `git switch`; nunca troque de branch com alterações incompatíveis sem parar e perguntar.
+Antes de qualquer leitura ou comando, confirme a raiz ativa com `git rev-parse --show-toplevel`. Trabalhe apenas nesse repositório. Não leia nem altere repositórios irmãos, ainda que estejam no mesmo workspace. Faça uma chamada Bash por comando: sem pipes, `&&`, `||`, `;`, substitutions ou encadear comandos. Não contorne glob de permissão juntando comando permitido com outro comando. Se a raiz não for repositório Git ou ainda não tiver commit base, pare e peça ao humano para inicializar o repositório.
+
+Implemente somente UMA fatia indicada pelo usuário. Leia `docs/spec.md`, `docs/plan.md` e `docs/status.md`. Exija `Status: Approved` explícito na spec, no plano e na fatia selecionada; status ausente, `Draft` ou `Proposed` significa parar e pedir aprovação humana. ADRs em `Proposed` nunca autorizam implementação. Crie/entre na branch `fatia/<n>-<slug>` com `git switch`; nunca troque de branch com alterações incompatíveis sem parar e perguntar.
 
 Escreva testes junto com a implementação, rode os testes e validadores pertinentes. Não instale dependências sem pedir. Não saia do escopo da fatia; se surgir bloqueio ou requisito novo, atualize `docs/status.md` com pendência e pergunte. Só faça commit local se tudo estiver verde. Nunca faça push. Ao terminar, atualize `docs/status.md` com feito, pendente e decisões tomadas.
 

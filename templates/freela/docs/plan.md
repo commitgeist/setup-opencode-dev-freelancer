@@ -2,6 +2,8 @@
 
 Status: Draft
 
+<!-- Humano altera para "Status: Approved" somente após revisar spec e plano. -->
+
 ## Dependências e decisões
 
 -
@@ -23,4 +25,6 @@ Status: Draft
 - **Critério de aceite:**
 - **Teste que prova:**
 - **Depende de:** nenhuma
-- **Status:** pendente
+- **Status:** Draft
+
+<!-- Humano marca cada fatia como "Status: Approved" antes de executar. -->

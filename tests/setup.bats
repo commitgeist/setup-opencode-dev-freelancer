@@ -71,7 +71,9 @@ assert_before() {
       '"head* .env*": deny' '"tail* .env*": deny' '"less .env*": deny' \
       '"more .env*": deny' '"awk* .env*": deny' '"grep* * .env*": deny' \
       '"rg* * .env*": deny' '"cut* .env*": deny' '"source .env*": deny' \
-      '"bash .env*": deny' '"sh .env*": deny' '"* .env*": deny' '"* *.env*": deny'; do
+      '"bash .env*": deny' '"sh .env*": deny' '"* | *": deny' \
+      '"* && *": deny' '"* || *": deny' '"* ; *": deny' '"*$( *": deny' \
+      '"*`*": deny' '"* .env*": deny' '"* *.env*": deny'; do
       run grep -F "$rule" "$file"
       [ "$status" -eq 0 ]
       assert_before "$file" "$last_allow" "$rule"
@@ -101,6 +103,8 @@ assert_before() {
     '"sed * .env*": deny' '"head* .env*": deny' '"tail* .env*": deny' '"less .env*": deny' \
     '"more .env*": deny' '"awk* .env*": deny' '"grep* * .env*": deny' '"rg* * .env*": deny' \
     '"cut* .env*": deny' '"source .env*": deny' '"bash .env*": deny' '"sh .env*": deny' \
+    '"* | *": deny' '"* && *": deny' '"* || *": deny' '"* ; *": deny' \
+    '"*$( *": deny' '"*`*": deny' \
     '"* .env*": deny' '"* *.env*": deny'; do
     run grep -F "$rule" "$file"
     [ "$status" -eq 0 ]
@@ -110,6 +114,21 @@ assert_before() {
   assert_before "$file" '"*": deny' '"explore": allow'
   assert_before "$file" '"*.env.*": deny' '"*.env.example": allow'
   assert_before "$file" '"*": allow' '"*.env": deny'
+  assert_before "$file" '"*": ask' '"* | *": deny'
+}
+
+@test "planejador pode editar somente docs e gate impede spec não aprovada" {
+  bash "$SCRIPT_DIR/setup.sh" --answers "$SCRIPT_DIR/tests/fixtures/answers.env"
+  file=.opencode/agents/planejador.md
+  assert_before "$file" '"*": deny' '"**/docs/**": allow'
+  assert_before "$file" '"*": deny' '"**/docs/*": allow'
+  assert_before "$file" '"*": deny' '"*/docs/*": allow'
+  run grep -F 'Status: Approved' "$file"
+  [ "$status" -eq 0 ]
+  run grep -F 'sem status, `Draft` ou `Proposed`' "$file"
+  [ "$status" -eq 0 ]
+  run grep -F 'Não liste, leia nem compare repositórios irmãos' "$file"
+  [ "$status" -eq 0 ]
 }
 
 @test "instalação global disponibiliza template copiável" {

@@ -2,6 +2,8 @@
 
 Status: Draft
 
+<!-- Humano altera para "Status: Approved" após confirmar escopo e critérios. -->
+
 ## Objetivo
 
 <!-- Qual problema do cliente será resolvido e para quem? -->

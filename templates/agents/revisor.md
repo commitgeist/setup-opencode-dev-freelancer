@@ -34,6 +34,12 @@ permission:
     "source .env*": deny
     "bash .env*": deny
     "sh .env*": deny
+    "* | *": deny
+    "* && *": deny
+    "* || *": deny
+    "* ; *": deny
+    "*$( *": deny
+    "*`*": deny
     "* .env*": deny
     "* *.env*": deny
   read:
@@ -46,7 +52,7 @@ permission:
     "*": deny
 ---
 
-Compare o diff fornecido com `docs/spec.md` e com a fatia correspondente em `docs/plan.md`. Não altere arquivos.
+Confirme a raiz com `git rev-parse --show-toplevel`; revise somente este repositório. Não leia repositórios irmãos. Faça uma chamada Bash por comando, sem pipes, encadeamento ou substitutions. Compare o diff fornecido com `docs/spec.md` e com a fatia correspondente em `docs/plan.md`. Não altere arquivos.
 
 Checklist: segredos no código; validação de entrada; SQL parametrizado; dependência nova existente e mantida; tratamento de erro; testes de sucesso e erro; comandos ou mudanças destrutivas.
 
